@@ -1,0 +1,494 @@
+let SessionLoad = 1
+if &cp | set nocp | endif
+let s:cpo_save=&cpo
+set cpo&vim
+imap <S-Tab> <Plug>snipMateBack
+inoremap <silent> <Plug>snipMateShow =snipMate#ShowAvailableSnips()
+inoremap <silent> <Plug>snipMateBack =snipMate#BackwardsSnippet()
+inoremap <silent> <Plug>snipMateTrigger =snipMate#TriggerSnippet(1)
+inoremap <silent> <Plug>snipMateNextOrTrigger =snipMate#TriggerSnippet()
+imap <silent> <F6> <F6>
+imap <silent> <F4> <F4>
+imap <silent> <F3> <F3>
+map  :call WinMove('h')
+xmap 	 <Plug>snipMateVisual
+smap 	 <Plug>snipMateNextOrTrigger
+map <NL> :call WinMove('j')
+map  :call WinMove('k')
+map  :call WinMove('l')
+map  <Plug>(ctrlp)
+nmap <silent> 3 :call ResizeVertical(75)
+nmap <silent> 2 :call ResizeVertical(50)
+nmap <silent> 1 :call ResizeVertical(25)
+nmap M :m -2
+nmap N :m +1
+nnoremap ^[ ^[
+nnoremap <silent>  :noh
+vnoremap   za
+nnoremap   za
+nnoremap # #``
+nnoremap * *``
+nnoremap Y y$
+nmap [% <Plug>(IndentWiseBlockScopeBoundaryBegin)
+xmap [% <Plug>(IndentWiseBlockScopeBoundaryBegin)
+nmap [_ <Plug>(IndentWisePreviousAbsoluteIndent)
+xmap [_ <Plug>(IndentWisePreviousAbsoluteIndent)
+nmap [+ <Plug>(IndentWisePreviousGreaterIndent)
+xmap [+ <Plug>(IndentWisePreviousGreaterIndent)
+nmap [= <Plug>(IndentWisePreviousEqualIndent)
+xmap [= <Plug>(IndentWisePreviousEqualIndent)
+nmap [- <Plug>(IndentWisePreviousLesserIndent)
+xmap [- <Plug>(IndentWisePreviousLesserIndent)
+omap [% <Plug>(IndentWiseBlockScopeBoundaryBegin)
+omap [_ <Plug>(IndentWisePreviousAbsoluteIndent)
+omap [+ <Plug>(IndentWisePreviousGreaterIndent)
+omap [= <Plug>(IndentWisePreviousEqualIndent)
+omap [- <Plug>(IndentWisePreviousLesserIndent)
+nmap [c <Plug>GitGutterPrevHunk
+nnoremap [b :bprevious
+omap \q :bp|sp|bn|bd
+vmap \q :bp|sp|bn|bd
+map \Q :bp|sp|bn|bd!
+nmap \T :enew
+nmap \l :bnext
+nmap \h :bprevious
+nmap \hp <Plug>GitGutterPreviewHunk
+nmap \hr <Plug>GitGutterUndoHunk:echomsg '\hr is deprecated. Use \hu'
+nmap \hu <Plug>GitGutterUndoHunk
+nmap \hs <Plug>GitGutterStageHunk
+xmap \Nr <Plug>NrrwrgnBangDo
+nmap \nr <Plug>NrrwrgnDo
+xmap \nr <Plug>NrrwrgnDo
+nnoremap <silent> \z :set opfunc=ResizeVerticalg@
+noremap <silent> \/ :call ToggleComment(getline("."))
+nmap \q <Plug>Kwbd
+noremap \w :w
+map \eb :e! ~/.bashrc
+map \sv :so ~/.vim/vimrc.vim
+map \ev :e! ~/.vim/vimrc.vim
+nmap ]% <Plug>(IndentWiseBlockScopeBoundaryEnd)
+xmap ]% <Plug>(IndentWiseBlockScopeBoundaryEnd)
+nmap ]_ <Plug>(IndentWiseNextAbsoluteIndent)
+xmap ]_ <Plug>(IndentWiseNextAbsoluteIndent)
+nmap ]+ <Plug>(IndentWiseNextGreaterIndent)
+xmap ]+ <Plug>(IndentWiseNextGreaterIndent)
+nmap ]= <Plug>(IndentWiseNextEqualIndent)
+xmap ]= <Plug>(IndentWiseNextEqualIndent)
+nmap ]- <Plug>(IndentWiseNextLesserIndent)
+xmap ]- <Plug>(IndentWiseNextLesserIndent)
+omap ]% <Plug>(IndentWiseBlockScopeBoundaryEnd)
+omap ]_ <Plug>(IndentWiseNextAbsoluteIndent)
+omap ]+ <Plug>(IndentWiseNextGreaterIndent)
+omap ]= <Plug>(IndentWiseNextEqualIndent)
+omap ]- <Plug>(IndentWiseNextLesserIndent)
+nmap ]c <Plug>GitGutterNextHunk
+nnoremap ]b :bnext
+xmap ac <Plug>GitGutterTextObjectOuterVisual
+omap ac <Plug>GitGutterTextObjectOuterPending
+vmap gx <Plug>NetrwBrowseXVis
+nmap gx <Plug>NetrwBrowseX
+nnoremap gR gD:%s////gc<Left><Left><Left>
+nnoremap gr gd[{V%::s/<C-R///gc<Left><Left><Left>
+xmap ic <Plug>GitGutterTextObjectInnerVisual
+omap ic <Plug>GitGutterTextObjectInnerPending
+nnoremap j gj
+nnoremap k gk
+nnoremap <SNR>24_: :=v:count ? v:count : ''
+xnoremap <SNR>31_VisualNrrwRgn :call nrrwrgn#NrrwRgn(visualmode(),'')
+xnoremap <SNR>31_VisualNrrwBang :call nrrwrgn#NrrwRgn(visualmode(),'!')
+nnoremap <silent> <Nul> :CtrlSpace
+vmap <F8> <F8>
+noremap <silent> <Plug>AirlineSelectNextTab :exe repeat(':tabn|', v:count1)
+noremap <silent> <Plug>AirlineSelectPrevTab gT
+noremap <silent> <Plug>AirlineSelectTab9 :9tabn
+noremap <silent> <Plug>AirlineSelectTab8 :8tabn
+noremap <silent> <Plug>AirlineSelectTab7 :7tabn
+noremap <silent> <Plug>AirlineSelectTab6 :6tabn
+noremap <silent> <Plug>AirlineSelectTab5 :5tabn
+noremap <silent> <Plug>AirlineSelectTab4 :4tabn
+noremap <silent> <Plug>AirlineSelectTab3 :3tabn
+noremap <silent> <Plug>AirlineSelectTab2 :2tabn
+noremap <silent> <Plug>AirlineSelectTab1 :1tabn
+vmap <silent> <F6> <F6>
+vmap <silent> <F3> <F3>
+smap <S-Tab> <Plug>snipMateBack
+vnoremap <silent> <Plug>NetrwBrowseXVis :call netrw#BrowseXVis()
+nnoremap <silent> <Plug>NetrwBrowseX :call netrw#BrowseX(expand((exists("g:netrw_gx")? g:netrw_gx : '<cfile>')),netrw#CheckIfRemote())
+snoremap <silent> <Plug>snipMateBack a=snipMate#BackwardsSnippet()
+snoremap <silent> <Plug>snipMateNextOrTrigger a=snipMate#TriggerSnippet()
+nnoremap <silent> <Plug>GitGutterPreviewHunk :GitGutterPreviewHunk
+nnoremap <silent> <Plug>GitGutterUndoHunk :GitGutterUndoHunk
+nnoremap <silent> <Plug>GitGutterStageHunk :GitGutterStageHunk
+nnoremap <silent> <expr> <Plug>GitGutterPrevHunk &diff ? '[c' : ":\execute v:count1 . 'GitGutterPrevHunk'\"
+nnoremap <silent> <expr> <Plug>GitGutterNextHunk &diff ? ']c' : ":\execute v:count1 . 'GitGutterNextHunk'\"
+xnoremap <silent> <Plug>GitGutterTextObjectOuterVisual :call gitgutter#hunk#text_object(0)
+xnoremap <silent> <Plug>GitGutterTextObjectInnerVisual :call gitgutter#hunk#text_object(1)
+onoremap <silent> <Plug>GitGutterTextObjectOuterPending :call gitgutter#hunk#text_object(0)
+onoremap <silent> <Plug>GitGutterTextObjectInnerPending :call gitgutter#hunk#text_object(1)
+nnoremap <SNR>32_: :=v:count ? v:count : ''
+nnoremap <silent> <Plug>(startify-open-buffers) :call startify#open_buffers()
+nnoremap <silent> <Plug>(ctrlp) :CtrlP
+xnoremap <SNR>20_VisualNrrwBang :call nrrwrgn#NrrwRgn(visualmode(),'!')
+xnoremap <SNR>20_VisualNrrwRgn :call nrrwrgn#NrrwRgn(visualmode(),'')
+nnoremap <silent> <Plug>Kwbd :Kwbd
+nnoremap <F2> :call NumberToggle()
+map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<' . synIDattr(synID(line("."),col("."),0),"name") . "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">" . " FG:" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"fg#")
+nmap <silent> <F1> :FKeyMappings
+nnoremap <F8> :TagbarToggle
+nnoremap <silent> <F6> :set spell!
+nnoremap <silent> <F4> :NERDTreeToggle
+nnoremap <silent> <F3> :set paste!
+cnoremap  <Home>
+cnoremap  <End>
+imap 	 <Plug>snipMateNextOrTrigger
+inoremap <expr> <NL> pumvisible() ? "\" : "\<NL>"
+inoremap <expr>  pumvisible() ? "\" : "\"
+imap 	 <Plug>snipMateShow
+inoremap ^L ^X^L
+inoremap ^D ^X^D
+inoremap ^F ^X^F
+inoremap ^] ^X^]
+let &cpo=s:cpo_save
+unlet s:cpo_save
+set autoindent
+set backspace=indent,eol,start
+set backup
+set backupdir=~/.vim/backup,~/.backup
+set backupskip=/tmp/backup/*,~/.backup/*
+set clipboard=unnamed
+set completeopt=menuone,noinsert
+set dictionary=/usr/share/dict/words
+set directory=~/.vim/swap,~/.swap
+set expandtab
+set fileencodings=ucs-bom,utf-8,latin1
+set fillchars=vert:┆,fold:-
+set guicursor=n-v-c:block,o:hor50,i-ci:hor15,r-cr:hor30,sm:block,a:blinkon0
+set helplang=en
+set hidden
+set hlsearch
+set ignorecase
+set incsearch
+set laststatus=2
+set lazyredraw
+set listchars=extends:>,precedes:<,tab:|\ ,eol:↲
+set operatorfunc=ResizeVertical
+set pyxversion=2
+set ruler
+set runtimepath=~/.vim,~/.vim/plugged/nerdtree/,~/.vim/plugged/nerdtree-git-plugin/,~/.vim/plugged/Kwbd.vim/,~/.vim/plugged/NrrwRgn/,~/.vim/plugged/Recover.vim/,~/.vim/plugged/tabular/,~/.vim/plugged/tagbar/,~/.vim/plugged/ctrlp.vim/,~/.vim/plugged/vim-startify/,~/.vim/plugged/vim-airline/,~/.vim/plugged/vim-airline-themes/,~/.vim/plugged/vim-fugitive/,~/.vim/plugged/gv.vim/,~/.vim/plugged/vim-gitgutter/,~/.vim/plugged/vim-addon-mw-utils/,~/.vim/plugged/tlib_vim/,~/.vim/plugged/vim-snipmate/,~/.vim/plugged/vim-snippets/,~/.vim/plugged/vim-colorschemes/,~/.vim/plugged/vim-monokai/,~/.vim/plugged/vim-hybrid/,~/.vim/plugged/vim-trailing-whitespace/,~/.vim/plugged/vim-devicons/,~/.vim/plugged/vim-polyglot/,~/.vim/plugged/vim-mustache-handlebars/,~/.vim/plugged/vim-openscad/,~/.vim/plugged/vim-indentwise/,~/.vim/plugged/vim-css-color/,~/.vim/plugged/nerdtree/,~/.vim/plugged/vim-ctrlspace/,/usr/share/vim/vimfiles,/usr/share/vim/vim80,/usr/share/vim/vimfiles/after,~/.vim/plugged/tabular/after,~/.vim/plugged/vim-snipmate/after,~/.vim/plugged/vim-polyglot/after,~/.vim/plugged/vim-css-color/after,~/.vim/after
+set scrolloff=3
+set shiftround
+set shiftwidth=4
+set showbreak=>
+set showcmd
+set showtabline=2
+set sidescroll=1
+set sidescrolloff=10
+set smartcase
+set smartindent
+set smarttab
+set softtabstop=4
+set splitbelow
+set splitright
+set synmaxcol=300
+set tabline=%!airline#extensions#tabline#get()
+set tabstop=4
+set notimeout
+set ttimeout
+set ttimeoutlen=10
+set viminfo='100,<100,s100,h,f1,:500
+set virtualedit=block
+set wildignore=*.pyc,*.luac,*.DS_Store,*.hg,*.git,*.svn
+set wildmode=longest,list
+set window=53
+let s:so_save = &so | let s:siso_save = &siso | set so=0 siso=0
+let v:this_session=expand("<sfile>:p")
+silent only
+cd /cygdrive/e/Steam/steamapps/common/GarrysMod/garrysmod/addons/LuaDev/lua
+if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
+  let s:wipebuf = bufnr('%')
+endif
+set shortmess=aoO
+badd +371 autorun/luarun.lua
+badd +10 luadev/ld_test.lua
+badd +18 luadev/ld_utils.lua
+badd +5 autorun/luadev_loader.lua
+badd +20 ~/.vim/plugged/vim-snippets/snippets/lua.snippets
+badd +3 ~/.vim/snippets/lua.snippets
+badd +125 includes/modules/chatcommand.lua
+badd +37 /cygdrive/e/Steam/steamapps/common/GarrysMod/garrysmod/addons/Util/lua/autorun/util/table.lua
+badd +1 \'chat\ history\'
+argglobal
+silent! argdel *
+edit ~/.vim/plugged/vim-snippets/snippets/lua.snippets
+set splitbelow splitright
+wincmd t
+set winminheight=1 winheight=1 winminwidth=1 winwidth=1
+argglobal
+setlocal keymap=
+setlocal noarabic
+setlocal autoindent
+setlocal backupcopy=
+setlocal nobinary
+setlocal nobreakindent
+setlocal breakindentopt=
+setlocal bufhidden=
+setlocal buflisted
+setlocal buftype=
+setlocal nocindent
+setlocal cinkeys=0{,0},0),:,0#,!^F,o,O,e
+setlocal cinoptions=
+setlocal cinwords=if,else,while,do,for,switch
+setlocal colorcolumn=
+setlocal comments=s1:/*,mb:*,ex:*/,://,b:#,:%,:XCOMM,n:>,fb:-
+setlocal commentstring=#\ %s
+setlocal complete=.,w,b,u,t,i
+setlocal concealcursor=
+setlocal conceallevel=0
+setlocal completefunc=
+setlocal nocopyindent
+setlocal cryptmethod=
+setlocal nocursorbind
+set cursorcolumn
+setlocal cursorcolumn
+set cursorline
+setlocal cursorline
+setlocal define=
+setlocal dictionary=
+setlocal nodiff
+setlocal equalprg=
+setlocal errorformat=
+setlocal noexpandtab
+if &filetype != 'snippets'
+setlocal filetype=snippets
+endif
+setlocal fixendofline
+setlocal foldcolumn=0
+set nofoldenable
+setlocal nofoldenable
+setlocal foldexpr=getline(v:lnum)!~'^\\t\\|^$'?'>1':1
+setlocal foldignore=#
+set foldlevel=1
+setlocal foldlevel=1
+setlocal foldmarker={{{,}}}
+set foldmethod=syntax
+setlocal foldmethod=expr
+setlocal foldminlines=1
+set foldnestmax=10
+setlocal foldnestmax=10
+setlocal foldtext=foldtext()
+setlocal formatexpr=
+setlocal formatoptions=tcq
+setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
+setlocal formatprg=
+setlocal grepprg=
+setlocal iminsert=0
+setlocal imsearch=0
+setlocal include=
+setlocal includeexpr=
+setlocal indentexpr=GetSnippetIndent()
+setlocal indentkeys=!^F,o,O,=snippet,=version,=extends
+setlocal noinfercase
+setlocal iskeyword=@,48-57,_,192-255
+setlocal keywordprg=
+setlocal nolinebreak
+setlocal nolisp
+setlocal lispwords=
+set list
+setlocal list
+setlocal makeprg=
+setlocal matchpairs=(:),{:},[:]
+setlocal modeline
+setlocal modifiable
+setlocal nrformats=bin,octal,hex
+set number
+setlocal number
+setlocal numberwidth=4
+setlocal omnifunc=
+setlocal path=
+setlocal nopreserveindent
+setlocal nopreviewwindow
+setlocal quoteescape=\\
+setlocal noreadonly
+set relativenumber
+setlocal norelativenumber
+setlocal norightleft
+setlocal rightleftcmd=search
+setlocal noscrollbind
+setlocal shiftwidth=4
+setlocal noshortname
+setlocal signcolumn=auto
+setlocal nosmartindent
+setlocal softtabstop=0
+setlocal nospell
+setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
+setlocal spellfile=
+setlocal spelllang=en
+setlocal statusline=%!airline#statusline(1)
+setlocal suffixesadd=
+setlocal swapfile
+setlocal synmaxcol=300
+if &syntax != 'snippets'
+setlocal syntax=snippets
+endif
+setlocal tabstop=4
+setlocal tagcase=
+setlocal tags=
+setlocal textwidth=0
+setlocal thesaurus=
+setlocal noundofile
+setlocal undolevels=-123456
+setlocal nowinfixheight
+setlocal nowinfixwidth
+set nowrap
+setlocal nowrap
+setlocal wrapmargin=0
+let s:l = 20 - ((19 * winheight(0) + 25) / 51)
+if s:l < 1 | let s:l = 1 | endif
+exe s:l
+normal! zt
+20
+normal! 08|
+tabedit \'chat\ history\'
+set splitbelow splitright
+wincmd t
+set winminheight=1 winheight=1 winminwidth=1 winwidth=1
+argglobal
+setlocal keymap=
+setlocal noarabic
+setlocal autoindent
+setlocal backupcopy=
+setlocal nobinary
+setlocal nobreakindent
+setlocal breakindentopt=
+setlocal bufhidden=
+setlocal buflisted
+setlocal buftype=
+setlocal nocindent
+setlocal cinkeys=0{,0},0),:,0#,!^F,o,O,e
+setlocal cinoptions=
+setlocal cinwords=if,else,while,do,for,switch
+setlocal colorcolumn=
+setlocal comments=:--
+setlocal commentstring=--%s
+setlocal complete=.,w,b,u,t,i
+setlocal concealcursor=
+setlocal conceallevel=0
+setlocal completefunc=
+setlocal nocopyindent
+setlocal cryptmethod=
+setlocal nocursorbind
+set cursorcolumn
+setlocal cursorcolumn
+set cursorline
+setlocal cursorline
+setlocal define=
+setlocal dictionary=
+setlocal nodiff
+setlocal equalprg=
+setlocal errorformat=
+setlocal expandtab
+if &filetype != 'lua'
+setlocal filetype=lua
+endif
+setlocal fixendofline
+setlocal foldcolumn=0
+set nofoldenable
+setlocal nofoldenable
+setlocal foldexpr=0
+setlocal foldignore=#
+set foldlevel=1
+setlocal foldlevel=1
+setlocal foldmarker={{{,}}}
+set foldmethod=syntax
+setlocal foldmethod=syntax
+setlocal foldminlines=1
+set foldnestmax=10
+setlocal foldnestmax=10
+setlocal foldtext=foldtext()
+setlocal formatexpr=
+setlocal formatoptions=croql
+setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
+setlocal formatprg=
+setlocal grepprg=
+setlocal iminsert=0
+setlocal imsearch=0
+setlocal include=
+setlocal includeexpr=
+setlocal indentexpr=GetLuaIndent()
+setlocal indentkeys=0{,0},:,0#,!^F,o,O,e,0=end,0=until,0=elseif,0=else
+setlocal noinfercase
+setlocal iskeyword=@,48-57,_,192-255
+setlocal keywordprg=
+setlocal nolinebreak
+setlocal nolisp
+setlocal lispwords=
+set list
+setlocal list
+setlocal makeprg=
+setlocal matchpairs=(:),{:},[:]
+setlocal modeline
+setlocal modifiable
+setlocal nrformats=bin,octal,hex
+set number
+setlocal number
+setlocal numberwidth=4
+setlocal omnifunc=
+setlocal path=
+setlocal nopreserveindent
+setlocal nopreviewwindow
+setlocal quoteescape=\\
+setlocal noreadonly
+set relativenumber
+setlocal relativenumber
+setlocal norightleft
+setlocal rightleftcmd=search
+setlocal noscrollbind
+setlocal shiftwidth=4
+setlocal noshortname
+setlocal signcolumn=auto
+setlocal nosmartindent
+setlocal softtabstop=4
+setlocal nospell
+setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
+setlocal spellfile=
+setlocal spelllang=en
+setlocal statusline=%!airline#statusline(1)
+setlocal suffixesadd=.lua
+setlocal swapfile
+setlocal synmaxcol=300
+if &syntax != 'text'
+setlocal syntax=text
+endif
+setlocal tabstop=4
+setlocal tagcase=
+setlocal tags=
+setlocal textwidth=0
+setlocal thesaurus=
+setlocal noundofile
+setlocal undolevels=-123456
+setlocal nowinfixheight
+setlocal nowinfixwidth
+set nowrap
+setlocal nowrap
+setlocal wrapmargin=0
+let s:l = 1 - ((0 * winheight(0) + 25) / 51)
+if s:l < 1 | let s:l = 1 | endif
+exe s:l
+normal! zt
+1
+normal! 0
+tabnext 1
+if exists('s:wipebuf')
+  silent exe 'bwipe ' . s:wipebuf
+endif
+unlet! s:wipebuf
+set winheight=1 winwidth=20 shortmess=filnxtToO
+set winminheight=1 winminwidth=1
+let s:sx = expand("<sfile>:p:r")."x.vim"
+if file_readable(s:sx)
+  exe "source " . fnameescape(s:sx)
+endif
+let &so = s:so_save | let &siso = s:siso_save
+doautoall SessionLoadPost
+unlet SessionLoad
+" vim: set ft=vim :

@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<META charset="utf-8"/>
+<HTML>
+	<title>LuaDev Ace Editor</title>
+	<HEAD>
+		<!-- 
+		<script type="text/javascript" charset="utf-8" src="http://cdn.jsdelivr.net/ace/1.1.7/min/ace.js"/>
+		<script type="text/javascript" charset="utf-8" src="http://cdn.jsdelivr.net/ace/1.1.7/min/ext-language_tools.js"/>
+		<script type="text/javascript" charset="utf-8" src="http://cdn.jsdelivr.net/ace/1.1.7/min/ext-keybinding_menu.js"/>
+		<script type="text/javascript" charset="utf-8" src="http://cdn.jsdelivr.net/ace/1.1.7/min/ext-settings_menu.js"/>
+		<script type="text/javascript" charset="utf-8" src="http://cdn.jsdelivr.net/ace/1.1.7/min/ext-themelist.js"/>
+		<script type="text/javascript" charset="utf-8" src="http://cdn.jsdelivr.net/ace/1.1.7/min/ext-modelist.js"/>
+		 -->
+		<script type="text/javascript" charset="utf-8" src="ace/src-min/ace.js"> </script>
+		<script type="text/javascript" charset="utf-8" src="ace/src-min/ext-language_tools.js"> </script>
+		<script type="text/javascript" charset="utf-8" src="ace/src-min/ext-keybinding_menu.js"> </script>
+		<script type="text/javascript" charset="utf-8" src="ace/src-min/ext-settings_menu.js"> </script>
+		<script type="text/javascript" charset="utf-8" src="ace/src-min/ext-themelist.js"> </script>
+		<script type="text/javascript" charset="utf-8" src="ace/src-min/ext-modelist.js"> </script>
+		<style type="text/css">
+			#editor {
+				position: absolute;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				width: 100% !important;
+				min-width: 100% !important;
+			}
+		</style>
+	</HEAD>
+	<BODY>
+		<div id="editor"></div>
+		<script type="text/javascript">
+			var editor = ace.edit("editor");
+			var session = editor.getSession();
+
+			ace.require("ace/ext/language_tools");
+			ace.require("ace/ext/keybinding_menu").init(editor);
+			ace.require("ace/ext/settings_menu").init(editor);
+
+			editor.themeList = ace.require("ace/ext/themelist");
+			editor.modeList = ace.require("ace/ext/modelist");
+
+			editor.setOptions({
+				enableMultiselect: true,
+				enableBasicAutocompletion: true,
+				enableSnippets: true,
+				enableLiveAutocompletion: true,
+				enableGutter: true
+			});
+
+			editor.commands.addCommands([{
+			    name: "showSettingsMenu",
+			    bindKey: {win: "Ctrl-q", mac: "Command-q"},
+			    exec: function(editor) {
+			        editor.showSettingsMenu();
+			    },
+			    readOnly: true
+			}]);
+
+			editor.resize(true);
+
+			editor.setTheme("ace/theme/monokai");
+			editor.getSession().setMode("ace/mode/lua");
+
+			// events I need
+			editor.on("change", function(e){
+				Lua_Call(e.data.action, e);
+			}); // document changed
+
+			editor.on("blur", function(e){
+				Lua_Call(e.type, e);
+			}); // document lost focus // does this trigger when vgui is blurred?
+
+			editor.on("focus", function(e){
+				Lua_Call(e.type, e);
+			}); // document gained focus // does this trigger when vgui is blurred?
+
+			editor.on("changeMode", function(e) {
+				Lua_Call(e.type, editor.getSession().getMode());
+			}); // syntax was changed
+
+			editor.renderer.on("themeLoaded", function(e) {
+				Lua_Call(e.type, editor.getTheme());
+			}); // theme was changed
+
+			// 	editor.on("copy") // copy
+			//	editor.on("paste") // paste
+
+			// Javascript->Lua function proxy
+			function Lua_Call(type, data) {
+				console.log(type, data);
+
+				if (typeof lua != "undefined") {
+					lua.invoke(type, JSON.stringify(data));
+				}
+			}
+
+
+			// Contents
+			function Lua_SetContents(contents) { session.setValue(contents); }
+			// function Lua_GetContents() { return session.getValue(); }
+
+			// Syntax
+			function Lua_SetSyntax(name) { session.setMode(name); }
+			// function Lua_GetSyntax() { return session.getMode(); }
+
+			// Theme
+			function Lua_SetTheme(name) { editor.setTheme(name, name); }
+			// function Lua_GetTheme() { return editor.getTheme(); }
+
+			// Selection
+			function Lua_GetSelection() {
+				return session.getTextRange(editor.getSelectionRange());
+			}
+
+			// init theme and mode lists
+			function Lua_CacheThemes() {
+				Lua_Call("themes", editor.themeList.themes);
+			}
+
+			function Lua_CacheModes() {
+				Lua_Call("modes", editor.modeList.modes);
+			}
+		</script>
+	</BODY>
+</HTML>

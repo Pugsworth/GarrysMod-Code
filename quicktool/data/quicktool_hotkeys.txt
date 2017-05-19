@@ -1,0 +1,293 @@
+Hotkeys
+{
+	escapekey q
+	upkey j
+	keys
+	{
+		a
+		{
+			description Constraints
+			keys
+			{
+				e
+				{
+					tool easy_precision
+				}
+				n
+				{
+					tool no_collide_multi
+				}
+				s
+				{
+					tool slider
+				}
+				u
+				{
+					tool keepupright
+				}
+				w
+				{
+					tool weld_ez
+				}
+			}
+		}
+		c
+		{
+			description "CPU / GPU stuff"
+			keys
+			{
+				a
+				{
+					tool wire_addressbus
+				}
+				c
+				{
+					tool wire_cpu
+				}
+				f
+				{
+					tool wire_hdd
+				}
+				g
+				{
+					tool wire_gpu
+				}
+				m
+				{
+					tool wire_gate_memory
+				}
+			}
+		}
+		d
+		{
+			tool adv_duplicator
+		}
+		e
+		{
+			tool wire_expression2
+		}
+		f
+		{
+			tool easy_precision
+		}
+		g
+		{
+			description "Gates"
+			keys
+			{
+				a
+				{
+					tool wire_gate_angle
+				}
+				c
+				{
+					tool wire_gate_comparison
+				}
+				l
+				{
+					tool wire_gate_logic
+				}
+				m
+				{
+					tool wire_gate_memory
+				}
+				t
+				{
+					tool wire_gate_time
+				}
+				r
+				{
+					tool wire_gate_arithmetic
+				}
+				v
+				{
+					tool wire_gate_vector
+				}
+			}
+		}
+		i
+		{
+			description Inputs
+			keys
+			{
+				b
+				{
+					tool wire_button
+				}
+				c
+				{
+					tool wire_value
+				}
+				g
+				{
+					tool wire_gps
+				}
+				k
+				{
+					tool wire_keyboard
+				}
+				r
+				{
+					tool wire_ranger
+				}
+				s
+				{
+					tool wire_speedometer
+				}
+				y
+				{
+					tool wire_gyroscope
+				}
+			}
+		}
+		k
+		{
+			tool wire
+		}
+		l
+		{
+			description Wiring
+			keys
+			{
+				d
+				{
+					tool wire_debugger
+				}
+				l
+				{
+					tool wire
+				}
+				k
+				{
+					tool wire_wirelink
+				}
+				n
+				{
+					tool wire_namer
+				}
+			}
+		}
+		o 
+		{
+			description Outputs
+			keys
+			{
+				c
+				{
+					tool wire_consolescreen
+				}
+				d
+				{
+					tool wire_digitalscreen
+				}
+				e
+				{
+					tool wire_egp
+				}
+				f
+				{
+					command "wire_rt_fix"
+					description "Fix rendertargets"
+				}
+				h
+				{
+					tool wire_holoemitter
+				}
+				o
+				{
+					tool wire_oscilloscope
+				}
+				s
+				{
+					tool wire_screen
+				}
+				t
+				{
+					tool wire_textscreen
+				}
+			}
+		}
+		p
+		{
+			description Physics
+			keys
+			{
+				h
+				{
+					tool wire_hydraulic
+				}
+				i
+				{
+					tool wire_igniter
+				}
+				o
+				{
+					tool wire_hoverball
+				}
+				t
+				{
+					tool wire_thruster
+				}
+				w
+				{
+					tool wire_wheel
+				}
+			}
+		}
+		s
+		{
+			command quicktool_search
+			description "Search tools"
+		}
+		v
+		{
+			description "Vanilla Gmod Tools"
+			keys
+			{
+				b
+				{
+					tool button
+				}
+				h
+				{
+					tool hydraulic
+				}
+				n
+				{
+					tool nocollide
+				}
+				r
+				{
+					tool rope
+				}
+				w
+				{
+					tool weld_ez
+				}
+			}
+		}
+		w
+		{
+			tool weld_ez
+		}
+		x
+		{
+			description Effects
+			keys
+			{
+				c
+				{
+					tool colour
+				}
+				m
+				{
+					tool material
+				}
+				r
+				{
+					tool camera
+				}
+			}
+		}
+	}
+}
