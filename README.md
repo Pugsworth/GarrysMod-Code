@@ -1,4 +1,4 @@
-# Garry-s-Mod-Code
+# GarrysMod-Code
 Various and miscellaneous code for Garry's Mod.
 
 Some incomplete, some tests, some random snippets/ideas.
