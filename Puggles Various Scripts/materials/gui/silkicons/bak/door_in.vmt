@@ -1,0 +1,5 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "gui/silkicons/door_in"
+	"$translucent" 1
+}

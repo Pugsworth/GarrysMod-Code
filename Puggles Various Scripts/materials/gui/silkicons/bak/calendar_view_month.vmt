@@ -1,0 +1,5 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "gui/silkicons/calendar_view_month"
+	"$translucent" 1
+}

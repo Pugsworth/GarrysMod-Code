@@ -1,0 +1,9 @@
+"UnlitGeneric"
+{
+	"$basetexture" "gui/silkicons/eye"
+	"$translucent"     1
+                "$ignorez"         1
+                "$vertexcolor"     1
+                "$vertexalpha"     1
+                "$nolod"           1 
+}

@@ -1,0 +1,5 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "gui/silkicons/status_busy"
+	"$translucent" 1
+}

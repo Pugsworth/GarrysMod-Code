@@ -1,0 +1,5 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "gui/silkicons/application_tile_horizontal"
+	"$translucent" 1
+}

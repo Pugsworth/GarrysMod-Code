@@ -1,0 +1,12 @@
+"AddonInfo"
+{
+	"name"		"Puggles Verious Scripts"
+ 	"version"	"1.0"
+ 	"up_date"	"Now"
+
+ 	"author_name"	"Pugsworth"
+ 	"author_email"	"No"
+ 	"author_url"	"None"
+
+ 	"info"		"Random scripts and other things"
+}

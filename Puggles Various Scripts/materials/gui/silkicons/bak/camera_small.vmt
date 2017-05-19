@@ -1,0 +1,5 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "gui/silkicons/camera_small"
+	"$translucent" 1
+}

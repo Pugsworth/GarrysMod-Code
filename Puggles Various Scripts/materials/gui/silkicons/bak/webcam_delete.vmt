@@ -1,0 +1,5 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "gui/silkicons/webcam_delete"
+	"$translucent" 1
+}

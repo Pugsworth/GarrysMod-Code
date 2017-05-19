@@ -1,0 +1,7 @@
+"UnlitGeneric"
+{
+	"$basetexture" "fo3_glow_crosshair_filled"
+	"$translucent" 1
+	"$vertexalpha" 1
+	"$vertexcolor" 1
+}

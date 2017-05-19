@@ -1,0 +1,5 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "gui/silkicons/textfield_delete"
+	"$translucent" 1
+}

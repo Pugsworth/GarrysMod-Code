@@ -1,0 +1,5 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "gui/silkicons/hourglass_go"
+	"$translucent" 1
+}

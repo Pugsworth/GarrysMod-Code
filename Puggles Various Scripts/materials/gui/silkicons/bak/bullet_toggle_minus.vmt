@@ -1,0 +1,5 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "gui/silkicons/bullet_toggle_minus"
+	"$translucent" 1
+}

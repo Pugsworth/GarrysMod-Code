@@ -1,0 +1,5 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "gui/silkicons/weather_clouds"
+	"$translucent" 1
+}

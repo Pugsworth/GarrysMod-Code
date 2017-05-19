@@ -1,0 +1,5 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "gui/silkicons/application_xp_terminal"
+	"$translucent" 1
+}

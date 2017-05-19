@@ -1,0 +1,190 @@
+--[[ ***TODO***
+Delete spawn icons - CHECK
+"Spawnlists"
+Ability to set Icon size
+Ability to set DPanelList size with parent
+
+--]]	
+local function Read()
+	local TProp = KeyValuesToTable( file.Read( "qsm/spawnlist.txt" ) )
+	V_Prop = {}
+	for k,v in pairs( TProp ) do  
+		V_Prop[tonumber( k )] = v  
+	end
+end	
+
+local function CreatePanelList()
+	Read()
+    V_IconPanel = vgui.Create( "DPanelList", V_DFrame ) 
+    V_IconPanel:EnableVerticalScrollbar( true ) 
+    V_IconPanel:EnableHorizontal( true ) 
+    V_IconPanel:SetPadding( 4 ) 
+    V_IconPanel:SetPos( 15,60 )
+	V_IconPanel:SetSize( 455, 136 )
+    
+    
+    local function RebuildAll()
+		local Items = V_IconPanel:GetItems()
+			for k, v in pairs( Items ) do
+				v:RebuildSpawnIcon()
+			end
+		end
+	for k, v in ipairs( V_Prop ) do
+		Icon = vgui.Create( "SpawnIcon" )
+		Icon:SetModel( v )
+		Icon:SetToolTip( k .." -- ".. v )
+		V_IconPanel:AddItem( Icon )
+		Icon:SetIconSize( 64 )
+		Icon.DoClick = function()    
+			surface.PlaySound( "ui/buttonclickrelease.wav" )  
+			RunConsoleCommand( "gm_spawn", v ) end  
+		Icon.OpenMenu = function()
+			Menu = DermaMenu()
+			Menu:AddOption( "Copy to Clipboard", function() SetClipboardText( v ) end )
+			local SubMenu = Menu:AddSubMenu( "Re-Render", function() Icon:RebuildSpawnIcon() end )
+				SubMenu:AddOption( "This Icon", function() Icon:RebuildSpawnIcon() end )
+				SubMenu:AddOption( "All Icons", function() RebuildAll() end )
+			local SpawnMenu = Menu:AddSubMenu( "Spawn Multiple", function() 
+				Derma_StringRequest( "Spawn request.", "How many do you want to spawn at once?", "10", function( text ) 
+				if type( tonumber( text ) ) != "number" then GAMEMODE:AddNotify( "Please enter a correct numerical value.", NOTIFY_ERROR, 5 ) return end
+				for i = 1, tonumber( text )  do
+					RunConsoleCommand( "gm_spawn", v ) end  end )
+			end )
+				for x = 2, 40, 2 do  
+					SpawnMenu:AddOption( tostring( x ), function()  
+						for i = 1, x do  
+							RunConsoleCommand( "gm_spawn", v )  
+						end  
+					end )  
+				end  
+			Menu:AddSpacer()
+			Menu:AddOption( "Delete", function()				
+				-- local TC = table.getn( V_Prop )
+				local TProp = table.Copy( V_Prop )
+				table.remove( TProp, tonumber( k ) )
+					if not file.IsDir( "qsm" ) then
+						file.CreateDir( "qsm" )
+					end 
+					PrintTable( V_Prop )
+				file.Write( "qsm/spawnlist.txt", TableToKeyValues( TProp ) )
+				chat.AddText(
+				Color( 255, 20, 20 ), "Deleted prop " .. v )
+				chat.PlaySound()
+				
+				V_IconPanel:Remove()
+				CreatePanelList()
+			end )
+			Menu:Open()
+		end
+	end 
+end
+
+local function CreateVGUI()
+    V_DFrame = vgui.Create( "DFrameTransparent" )
+    V_DFrame:SetSize( 485, 240 )
+    V_DFrame:SetPos( ScrW( ) / 2 - V_DFrame:GetWide( ) / 2, ScrH( ) / 2 - V_DFrame:GetTall( ) / 2 )
+    V_DFrame:SetTitle( "Quick Spawn Menu" )
+    V_DFrame:SetVisible( false )
+    V_DFrame:SetSizable( true )
+    V_DFrame:SetDeleteOnClose( false )
+    V_DFrame:ShowCloseButton( true )
+    V_DFrame:MakePopup()
+
+	DSliderIcon = vgui.Create( "DNumSlider", V_DFrame )
+    DSliderIcon:SetPos( 15, 200 )
+    DSliderIcon:SetText( "Icon Size" )
+    DSliderIcon:SetWide( 370 )
+    DSliderIcon:SetMin( 10 )
+    DSliderIcon:SetMax( 128 )
+    DSliderIcon:SetDecimals( 0 )
+    DSliderIcon:SetValue( 64 )
+	
+	DTextEntryAdd = vgui.Create( "DTextEntry", V_DFrame )
+    DTextEntryAdd:SetSize( 375, 20 )
+    DTextEntryAdd:SetPos( 15, 30 )
+    DTextEntryAdd:SetText( "" )
+    DTextEntryAdd.OnEnter = function() end
+    
+	DButton_Clear = vgui.Create( "DButton", V_DFrame )
+	DButton_Clear:SetSize( 60, 23 )
+	DButton_Clear:SetPos( 400, 205 )
+	DButton_Clear:SetText( "Clear >" )
+	DButton_Clear.DoRightClick = function()
+		Menu = DermaMenu()
+			Menu:AddOption( "All props", function() RunConsoleCommand( "gmod_cleanup" ) end )
+			Menu:AddOption( "Spawnlist", function() 
+				gui.EnableScreenClicker( true )
+				Derma_Query( "Are you sure you want to clear the entire spawnlist, this can't undone.", "Are you sure?",
+					"Yes", function() table.Empty( V_Prop ) file.Write( "qsm/spawnlist.txt", TableToKeyValues( V_Prop ) ) end,
+					"Cancel", function() end )
+			end )
+			Menu:Open()
+	end
+	
+    local DButtonAdd = vgui.Create( "DButton", V_DFrame )
+    DButtonAdd:SetSize( 70, 20 )
+    DButtonAdd:SetPos( 400, 30 )
+    DButtonAdd:SetText( "Add Model" )
+    DButtonAdd.DoClick = function()
+		if not util.IsValidModel( DTextEntryAdd:GetValue() ) then
+			GAMEMODE:AddNotify( "Please verify your model path again, or try spawning the model first.", NOTIFY_ERROR, 5 )
+			-- GAMEMODE:AddNotify( "It isn't possible to check for a valid model right now, be cautious.", NOTIFY_GENERIC, 5 )
+			return 
+		end
+        Read()
+        local TC = table.getn( V_Prop )
+		local W_Prop = table.Copy( V_Prop )
+        table.insert( W_Prop, TC + 1, DTextEntryAdd:GetValue() )
+		if not file.IsDir( "qsm" ) then
+			file.CreateDir( "qsm" )
+		end 
+        file.Write( "qsm/spawnlist.txt", TableToKeyValues( W_Prop ) )
+		DTextEntryAdd:SetText( "" )
+        DTextEntryAdd:KillFocus()
+		
+		V_IconPanel:Remove()
+        CreatePanelList()
+		-- V_DFrame:SetVisible( false )
+    end
+	local DImageButtonRefresh = vgui.Create( "DImageButton", V_DFrame )
+    DImageButtonRefresh:SetSize( 10, 10 )
+    DImageButtonRefresh:SetPos( 440, 4 )
+    DImageButtonRefresh:SetImage( "gui/silkicons/arrow_refresh.vtf" )
+    DImageButtonRefresh:SizeToContents()
+    DImageButtonRefresh.DoClick = function()       
+        V_IconPanel:Remove()
+        CreatePanelList()
+    end
+    DImageButtonRefresh.DoRightClick = function() end 
+end
+
+-- local function IconThink()
+	-- if not ( DSliderIcon and Icon ) then return end
+	-- DSliderIcon.ValueChanged = function( pSelf, fValue )
+        -- Icon:SetIconSize( DSliderIcon:GetValue() ) 
+    -- end
+-- end
+-- hook.Add( "Think", "ThinkIcon", IconThink )
+
+timer.Create( "CreateVGUI", 0.1, 0, function()
+	if vgui then
+		CreateVGUI()
+		timer.Destroy( "CreateVGUI" )
+	end
+end )
+
+local function Custom_spawn()
+	CreatePanelList()
+    V_DFrame:SetVisible( true )
+end
+
+concommand.Add( "+Quick_spawn", Custom_spawn )
+
+concommand.Add( "-Quick_spawn",  function()
+    if DTextEntryAdd:HasFocus() then return end
+	    V_DFrame:SetVisible( false )
+	if not ( Menu and Menu:IsVisible() ) then      
+		return      
+	end   
+	Menu:Hide()  
+end )

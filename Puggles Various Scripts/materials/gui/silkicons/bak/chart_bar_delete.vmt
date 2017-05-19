@@ -1,0 +1,5 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "gui/silkicons/chart_bar_delete"
+	"$translucent" 1
+}

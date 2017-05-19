@@ -1,0 +1,9 @@
+"UnlitGeneric"
+{
+	"$basetexture" "gui/silkicons/wrench_orange"
+	"$translucent"     1
+                "$ignorez"         1
+                "$vertexcolor"     1
+                "$vertexalpha"     1
+                "$nolod"           1 
+}

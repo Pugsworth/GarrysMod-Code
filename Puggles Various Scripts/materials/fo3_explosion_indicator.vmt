@@ -1,0 +1,5 @@
+"UnlitGeneric"
+{
+	"$basetexture" "fo3_explosion_indicator"
+	"$translucent" 1
+}

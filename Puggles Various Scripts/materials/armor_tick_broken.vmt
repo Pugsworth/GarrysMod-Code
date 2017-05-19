@@ -1,0 +1,5 @@
+"UnlitGeneric"
+{
+	"$basetexture" "armor_tick_broken"
+	"$translucent" 1
+}

@@ -1,0 +1,286 @@
+local format = string.format;
+
+local sounds = {};
+
+local function CombineFilenamePath(path, tbl)
+
+    local ret = {};
+
+    for i = 1, #tbl do
+        ret[#ret+1] = path .. tbl[i]; -- concat pls
+    end
+
+    return ret;
+
+end
+
+local function ResolvePath(path)
+
+    if path:find('\\') then
+        path = path:gsub('\\', '/');
+    end
+
+    if path:find('^/?sound[s]?/') then -- strip 'sound(s)' from beginning of path because EmitSound uses path relative to sound/ directory
+        path = path:gsub('^/?sound[s]?/', '');
+    end
+
+    if path:sub(-1, -1) ~= '/' then
+        return string.format('%s/', path);
+    end
+
+    return path;
+
+end
+
+local function ResolveFilePattern(pattern)
+
+    if pattern:find('%*$') then
+        return string.format("%s.wav", pattern);
+    else
+        return pattern;
+    end
+
+end
+
+local function MergeArrays(a, b) -- easy way to merge an array without creating an abundance of tables
+    for i = 1, #b do
+        a[#a+1] = b[i];
+    end
+end
+
+
+local function FindSounds(tbl)
+
+    local ret = {}; -- temporary return table for all the paths
+    local path = ResolvePath(tbl[1]);
+
+    for i = 2, #tbl do -- start at 2 because 1 is the path
+        MergeArrays(ret, CombineFilenamePath(path, file.Find("sound/" .. path .. ResolveFilePattern(tbl[i]), "GAME")));
+        -- because CombineFilenamePath returns a new array, we have to merge ret so the end result is a 1 Dimensional array of string paths.
+    end
+
+    return ret;
+
+end
+
+function AddReactionSound(name, paths)
+
+    local tblsound = {};
+
+    for hitbox, tblpaths in pairs(paths) do
+
+        local ret = {};
+
+        if hitbox == "merge" then
+            ret = tblpaths;
+
+        elseif istable(tblpaths[1]) then
+            for i = 1, #tblpaths do    
+                MergeArrays(ret, FindSounds(tblpaths[i]));
+            end
+
+        else
+            ret = FindSounds(tblpaths);
+        end
+
+        tblsound[hitbox] = ret;
+
+    end
+
+    sounds[#sounds+1] = {name, tblsound};
+
+    table.sort(sounds, function(a, b) return #a[1] > #b[1]; end);
+
+end
+
+--[[-----------------------------------------------
+    Data Format:
+
+        {
+            [key] = sounddata,
+            pain  = sounddata,
+            merge = mergedata
+        }
+
+        Key: (optional)
+            key is the hitbox associated with the sounds.
+            It can be any of: leg, arm, gut, chest, or head.
+
+        Sounddata:
+            sounddata consists of a table that contains either a table for each path, or the path table itself (if only one path is needed).
+            The first index, of the path table, is the path to use. The path can be relative to the root or the sounds directory. The rest are the patterns to search for the sounds in the path.
+            The pattern can be just the sound prefix, the sound prefix with a wildcard, or the sound prefix with wildcard and extension. (file.Find format)
+            I.E. "sound" or "sound*" or "sound*.wav"
+
+        Pain: (required)
+            'pain' is a generic sound emitted with a random chance (20% default) or if no hitbox is found.
+
+        Merge:
+            If the 'merge' key exists, then every consecutive hitbox after the first are to be merged with the first hitbox.
+            I.E. {'gut', 'chest'}; getting hit in the chest would make the gut sound play
+
+
+    Look before for more examples.
+--]]-----------------------------------------------
+
+AddReactionSound("female", { -- female citizen/rebel
+    pain = {"sound/vo/npc/female01/", "pain*.wav"},
+    leg  = {"sound/vo/npc/female01/", "myleg*.wav"},
+    arm  = {"sound/vo/npc/female01/", "myarm*.wav"},
+    gut  = {"sound/vo/npc/female01/", "hitingut*.wav", "mygut*.wav"},
+    merge = {"gut", "chest"}
+});
+
+AddReactionSound("male", { -- male citizen/rebel
+    pain = {"sound/vo/npc/male01/", "pain*.wav"},
+    leg  = {"sound/vo/npc/male01/", "myleg*.wav"},
+    arm  = {"sound/vo/npc/male01/", "myarm*.wav"},
+    gut  = {"sound/vo/npc/male01/", "hitingut*.wav", "mygut*.wav"},
+    merge = {"gut", "chest"}
+});
+
+AddReactionSound("police", { -- metropolice
+    pain = {"sound/npc/metropolice", "pain*.wav"}
+});
+
+AddReactionSound("combine_soldier", {
+    pain = {"sound/npc/combine_soldier/", "pain*.wav"}
+});
+AddReactionSound("combine_super_soldier", { -- "elite" combine solder
+    pain = {"sound/npc/combine_soldier/", "pain*.wav"}
+});
+
+AddReactionSound("zombie_soldier", {
+    pain = {"sound/npc/zombine/", "zombine_pain*.wav"}
+});
+
+AddReactionSound("barney", {
+    pain = {"sound/vo/npc/barney/", "ba_pain*.wav"}
+});
+
+AddReactionSound("zombie", {
+    pain = {"sound/npc/zombie/", "zombie_pain*.wav"}
+});
+
+AddReactionSound("monk", {
+    pain = {"sound/vo/ravenholm/", "monk_pain*.wav"}
+});
+
+AddReactionSound("alyx", {
+    pain = {"sound/vo/npc/alyx/", "hurt*.wav"}
+});
+
+AddReactionSound("hostage", {
+    pain = {"sound/hostage/hpain/", "hpain*.wav"}
+});
+
+
+local plytbl = {};
+local convars = {
+    enable      = CreateConVar("hurtreactions_enable",          "1",  {FCVAR_ARCHIVE}, "Enable/Disable reactions sounds"),
+    painchance  = CreateConVar("hurtreactions_chance",          0.2, {FCVAR_ARCHIVE}, "Percent chance (0 - 1) for generic reaction"), -- 20% chance
+    minpaindmg  = CreateConVar("hurtreactions_mingenericpain",  15, {FCVAR_ARCHIVE}, "Minimum pain for a generic sound"), -- slighlty higher than a pistol shot to chest
+    sndinterval = CreateConVar("hurtreactions_interval",        4, {FCVAR_ARCHIVE}, "Interval between reactions") -- 3 seconds minium between sounds per player
+};    
+
+local tblhitboxes = {
+    [HITGROUP_HEAD]       = 'head',
+    [HITGROUP_CHEST]      = 'chest',
+    [HITGROUP_STOMACH]    = 'gut',
+
+    [HITGROUP_LEFTARM]    = 'arm',
+    [HITGROUP_RIGHTARM]   = 'arm',
+
+    [HITGROUP_LEFTLEG]    = 'leg',
+    [HITGROUP_RIGHTLEG]   = 'leg'
+};
+
+function GetReaction(hitbox, tbl, damage) -- TODO: cleanup logic
+
+    if damage <= convars.minpaindmg:GetInt() then
+        local painchance = convars.painchance:GetFloat();
+        if painchance ~= 0.0 and math.random() <= painchance then
+            return 'pain';
+        end
+    end
+
+    if not tblhitboxes[hitbox] then
+        return 'pain';
+    else
+
+        local strhitbox = tblhitboxes[hitbox];
+
+        if not strhitbox then
+            return "pain";
+        else
+
+            if not tbl[strhitbox] then
+
+                if tbl['merge'] then
+                    local tblmerge = tbl['merge'];
+                    local default = tblmerge[1];
+
+                    for i = 2, #tblmerge do
+                        if strhitbox == tblmerge[i] then
+                            return default;
+                        end
+                    end
+
+                end
+
+            else
+                return strhitbox;
+            end
+
+        end
+
+    end
+
+    return 'pain';
+
+end
+
+hook.Add('ScalePlayerDamage', 'PlayerDamage.Reactions', function(ply, hitbox, dmginfo)
+
+    if not IsValid(ply) or convars.enable:GetBool() == false then
+        return;
+    end
+    
+    if plytbl[ply] then
+        if plytbl[ply].nextreaction > CurTime() then
+            return;
+        end
+    end
+
+    local plymdl = ply:GetModel();
+    local mdlname = plymdl:sub(plymdl:find('/[^/]+$')); -- extract model name from path
+
+    local snd;
+    for i = 1, #sounds do
+        
+        local name, tbl = sounds[i][1], sounds[i][2];
+
+        if mdlname:find(name) then
+            reaction = GetReaction(hitbox, tbl, dmginfo:GetDamage());
+            local size = #tbl[reaction];
+            snd = tbl[reaction][math.random(1, size)];
+            break;
+        end
+
+    end
+
+    if snd then
+        ply:EmitSound(snd);
+    end
+
+    if not plytbl[ply] then
+        plytbl[ply] = {};
+    end
+
+    plytbl[ply].nextreaction = CurTime() + convars.sndinterval:GetInt();
+
+end);
+
+hook.Add('PlayerDisconnect', 'PlayerDamage.Cleanup', function(ply)
+    plytbl[ply] = nil;
+end);
