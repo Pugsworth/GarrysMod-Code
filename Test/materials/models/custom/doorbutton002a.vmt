@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/custom/doorbutton002a"
+	"$normalmap" "models/custom/doorbutton002a_normal"
+}

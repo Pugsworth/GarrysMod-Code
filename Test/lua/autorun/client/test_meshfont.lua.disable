@@ -1,0 +1,255 @@
+AddCSLuaFile();
+
+print("test_meshfont");
+
+local data = {
+	text = "",
+	scale = 8.0,
+	fx = {
+		wavetime = false,
+		rainbow = false
+	},
+	mat = {
+		font = Material("testing/runescapefont"),
+		white = Material("models/debug/debugwhite"),
+		wireframe = Material("debug/debugwireframe"),
+		error = Material("effects/combinedisplay002b")
+	},
+	font_data = {
+		width = 16,
+		height = 16,
+		size = {w = 256, h = 256}
+	},
+	-- ascii character sizes starting at code 32
+	character_widths = {
+		3, 3, 6, 13, 8, 12, 12, 3,
+		5, 5, 8, 9, 3, 7, 3, 6,
+		7, 5, 7, 7, 8, 7, 7, 7,
+		7, 7, 3, 5, 7, 8, 7, 8,
+		13, 8, 7, 7, 7, 7, 7, 7,
+		7, 5, 8, 8, 7, 10, 8, 8,
+		7, 9, 7, 7, 7, 7, 7, 11,
+		8, 7, 7, 6, 6, 6, 8, 9,
+		12, 7, 7, 6, 7, 7, 7, 7,
+		7, 3, 6, 7, 3, 9, 7, 7,
+		7, 8, 6, 7, 6, 7, 7, 8,
+		7, 7, 7, 7, 3, 7, 11, 12
+	}
+
+};
+
+local function getTextWidth(text)
+
+	local width = 0;
+
+	local charIndex = 1;
+
+	for i = 1, #text do
+		charIndex = string.byte(text[i]);
+		width = width + data.character_widths[charIndex - 31];
+	end
+
+	return width;
+
+end
+
+local function drawCharacter(char, x, y, col)
+
+	local charcode = string.byte(char, 1, 1);
+	local charIndex = charcode - 32;
+
+	local charW = data.character_widths[charIndex + 1];
+	local height = data.font_data.height; -- height is fixed for now
+
+	local charX = math.floor(charIndex % data.font_data.width);
+	local charY = math.floor(charIndex / data.font_data.height);
+	-- print(char, charX, charY, charW);
+
+	-- local x = charX - data.font_data.width;
+	-- local y = charY - data.font_data.height;
+
+	local u = (charX * data.font_data.width) / data.font_data.size.w;
+	local v = (charY * height) / data.font_data.size.h;
+	local us = charW / data.font_data.size.w;
+	local vs = data.font_data.height / data.font_data.size.h;
+	-- print(u, v);
+
+	mesh.Begin(MATERIAL_QUADS, 1);
+
+		mesh.Position(Vector(x, y));
+		mesh.TexCoord(0, u, v);
+		mesh.Color(col.r, col.g, col.b, col.a);
+		mesh.AdvanceVertex();
+
+		mesh.Position(Vector(x + charW, y));
+		mesh.TexCoord(0, u + us, v);
+		mesh.Color(col.r, col.g, col.b, col.a);
+		mesh.AdvanceVertex();
+
+		mesh.Position(Vector(x + charW, y + height));
+		mesh.TexCoord(0, u + us, v + vs);
+		mesh.Color(col.r, col.g, col.b, col.a);
+		mesh.AdvanceVertex();
+
+		mesh.Position(Vector(x, y + height));
+		mesh.TexCoord(0, u, v + vs);
+		mesh.Color(col.r, col.g, col.b, col.a);
+		mesh.AdvanceVertex();
+
+	mesh.End();
+
+end
+
+local function drawMesh(depth, skybox)
+
+	if depth or skybox then
+		return;
+	end
+
+	render.SetLightingOrigin(vector_origin);
+	render.ResetModelLighting(1, 1, 1);
+	render.SetLightingMode(2);
+	render.SetBlend(1);
+
+	local scale = data.scale;
+
+	local trace = LocalPlayer():GetEyeTraceNoCursor();
+	local pos = trace.HitPos;
+	local scrpos = pos:ToScreen(); scrpos.y = scrpos.y / 2;
+	local col = Color(255, 255, 255, 255);
+
+	local width, height = data.font_data.width, data.font_data.height;
+	local textwidth = getTextWidth(data.text) * data.scale;
+
+	render.SuppressEngineLighting(true);
+	render.PushFilterMag(TEXFILTER.POINT);
+	render.PushFilterMin(TEXFILTER.POINT);
+
+	-- fx variables
+	local yoffset = 0;
+	local frequency = 16 / #data.text;
+	local slice = 360 / #data.text;
+
+	cam.Start2D();
+
+	render.SetMaterial(data.mat.font);
+
+	local mat = Matrix();
+	mat:SetTranslation(Vector(scrpos.x - textwidth / 2, scrpos.y - ((height/2) * scale), 0));
+	mat:SetScale(Vector(1, 1, 1) * scale);
+
+	local x, y = 0, 0;
+
+	cam.PushModelMatrix(mat);
+	-- single line
+	for i = 1, #data.text do
+		local char = data.text[i];
+
+		local charcode = string.byte(char);
+		local charIndex = charcode - 31;
+
+		local charW = data.character_widths[charIndex];
+		if data.fx.wavetime then
+			yoffset = height/4 * math.sin(CurTime()*5 + -i * frequency);
+		end
+
+		if data.fx.rainbow then
+			col = HSVToColor(slice * i, 1, 1);
+		end
+		col = Color(255, 0, 0);
+
+		drawCharacter(char, x, y + yoffset, col);
+
+		x = x + charW;
+	end
+	cam.PopModelMatrix();
+
+	--[[
+	mat:Translate(Vector(width, 0));
+	cam.PushModelMatrix(mat);
+	render.SetMaterial(data.mat.font);
+	render.DrawQuad(v1, v2, v3, v4, Color(255, 0, 0));
+
+
+	-- draw debug cell position
+	render.SetMaterial(data.mat.wireframe);
+	local x = fontpos.x;
+	local y = fontpos.y;
+	v1 = Vector(x, y);
+	v2 = Vector(x + 1, y);
+	v3 = Vector(x + 1, y + 1);
+	v4 = Vector(x, y + 1);
+	render.DrawQuad(v1, v2, v3, v4, Color(255, 0, 0));
+
+	cam.PopModelMatrix();
+	]]
+
+	cam.End2D();
+
+	render.SetLightingMode(0);
+
+	render.PopFilterMin();
+	render.PopFilterMag();
+	render.SuppressEngineLighting(false);
+
+end
+
+hook.Add("PostDrawTranslucentRenderables", "pugs-drawMesh", drawMesh);
+
+
+list.Set("DesktopWindows", "TestMeshFont", {
+
+	title		= "Test Mesh Font",
+	icon		= "icon64/tool.png",
+	width		= 480,
+	height		= 240,
+	onewindow	= true,
+	init		= function(icon, window)
+
+		local pnl = window:Add("DPanelList");
+		pnl:Dock(TOP);
+		local textbox = pnl:Add("DTextEntry");
+		textbox:Dock(TOP);
+		textbox:SetValue(data.text);
+		textbox:SetUpdateOnType(true);
+		textbox.OnValueChange = function(self, text)
+			data.text = text;
+		end
+
+		pnl = window:Add("DPanel");
+		pnl:Dock(FILL);
+
+		local wang = pnl:Add("DNumSlider");
+		wang:Dock(TOP);
+		wang:DockMargin(10, 0, 0, 0);
+		wang:SetDark(true);
+		wang:SetDecimals(1);
+		wang:SetMinMax(1, 64);
+		wang:SetValue(data.scale);
+		wang:SetText("Scale");
+		wang.OnValueChanged = function(self, value)
+			data.scale = value;
+		end
+
+		local chkbox = pnl:Add("DCheckBoxLabel");
+		chkbox:Dock(TOP);
+		chkbox:DockMargin(10, 0, 0, 0);
+		chkbox:SetDark(true);
+		chkbox:SetText("Do the wave!");
+		chkbox.OnChange = function(self, value)
+			data.fx.wavetime = value;
+		end
+
+		chkbox = pnl:Add("DCheckBoxLabel");
+		chkbox:Dock(TOP);
+		chkbox:DockMargin(10, 0, 0, 0);
+		chkbox:SetDark(true);
+		chkbox:SetText("Rainbow");
+		chkbox.OnChange = function(self, value)
+			data.fx.rainbow = value;
+		end
+
+	end
+});
+
+PUGS_TEST = drawCharacter;

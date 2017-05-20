@@ -1,0 +1,140 @@
+if CLIENT then
+
+	local hitboxes = {};
+
+	function DrawHitBoxes(ent, time)
+		if not IsValid(ent) then return; end
+
+		local hbgroupcount = ent:GetHitBoxGroupCount() or 0;
+
+		local ret = {};
+
+		for i = 0, hbgroupcount - 1 do
+			local hbcount = ent:GetHitBoxCount(i) or 0;
+
+			for j = 0, hbcount - 1 do
+				local mins, maxs = ent:GetHitBoxBounds(j, i);
+				local bpos, bang = ent:GetBonePosition(ent:GetHitBoxBone(j, i));
+
+				table.insert(ret, {
+					bounds = {mins, maxs},
+					origin = bpos,
+					ang = bang,
+				});
+			end
+
+		end
+
+		local ragdoll;
+		if ent:IsNPC() or ent:IsPlayer() or ent:IsRagdoll() then
+			ragdoll = ClientsideModel(ent:GetModel(), RENDERGROUP_BOTH);
+			ragdoll:SetPos(ent:GetPos());
+			ragdoll:SetAngles(ent:GetAngles());
+			ragdoll:ResetSequence(ent:GetSequence());
+			ragdoll:SetCycle(ent:GetCycle());
+
+			ragdoll:SetColor(ColorAlpha(ent:GetColor(), 128));
+			ragdoll:SetRenderFX(kRenderFxHologram);
+			ragdoll:SetKeyValue("renderfx", 16);
+			ragdoll:SetNoDraw(true) -- we will be manually drawing it with fancy effects
+			print(ent:GetSequenceInfo(ent:GetSequence()).label, ent:GetCycle());
+		end
+
+		table.insert(hitboxes, {
+			time = RealTime() + time,
+			origin = ent:GetPos(),
+			hitboxes = ret,
+			ragdoll = ragdoll
+		});
+
+	end
+
+	local mat_wireframe = Material("models/wireframe");
+	hook.Add("PostDrawOpaqueRenderables", "Hitboxes", function()
+		if #hitboxes == 0 then return false; end
+
+		for i = 1, #hitboxes do
+			local hitbox = hitboxes[i];
+			if not hitbox then continue; end
+
+			local ragdoll = hitbox.ragdoll;
+			if IsValid(ragdoll) then
+				render.SetBlend(0.8);
+				ragdoll:DrawModel();
+
+				render.SetBlend(0.1);
+				render.MaterialOverride(mat_wireframe);
+				ragdoll:DrawModel();
+				render.MaterialOverride();
+			end
+
+			if hitbox.time < RealTime() then -- time's up, don't render, remove from table
+				SafeRemoveEntity(hitbox.ragdoll);
+				table.remove(hitboxes, i);
+
+				i = i - 1;
+			else
+
+				local set = hitbox.hitboxes;
+
+				for j = 1, #set do
+					local hb = set[j];
+
+					local mins, maxs = unpack(hb.bounds);
+
+					-- render.DrawWireframeBox(hb.origin, hb.ang, mins, maxs, HSVToColor((360 / #set) * j, 0.5, 1), true);
+				end
+
+			end
+
+		end
+
+	end);
+
+
+	net.Receive("entityshot", function()
+		local ent = net.ReadEntity();
+		local time = net.ReadInt(8);
+
+		DrawHitBoxes(ent, time);
+	end);
+
+end
+
+if SERVER then
+
+	util.AddNetworkString("entityshot");
+
+	-- hook.Add("EntityFireBullets", "HitBoxes", function(shooter, data)
+	-- 	print("shot!");
+
+	-- 	-- if IsValid(shooter) and shooter:IsPlayer() then
+	-- 		local tr = util.TraceLine(util.GetPlayerTrace(shooter, data.Dir));
+	-- 		local ent = tr.Entity;
+
+	-- 		if IsValid(ent) then
+	-- 			-- DrawHitBoxes(ent, 5);
+	-- 			print("send!");
+
+	-- 			net.Start("entityshot")
+	-- 				net.WriteEntity(ent);
+	-- 				net.WriteInt(5, 8);
+	-- 			net.Broadcast();
+	-- 		end
+	-- 	-- end
+	-- end);
+
+	hook.Add("EntityTakeDamage", "HitBoxes", function(target, dmginfo)
+		if IsValid(target) then
+			if dmginfo:GetDamage() >= target:Health() then
+
+				net.Start("entityshot")
+					net.WriteEntity(target);
+					net.WriteInt(5, 8);
+				net.Broadcast();
+
+			end
+		end
+	end);
+
+end
